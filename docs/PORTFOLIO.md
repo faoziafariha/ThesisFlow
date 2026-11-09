@@ -14,13 +14,13 @@ Set the About website field to the verified live URL. Replace placeholders befor
 
 Use this after you have deployed it and observed a green delivery pipeline:
 
-**ThesisFlow — Thesis & Project Management Portal** | React, TypeScript, Express, SQLite, Docker, GitHub Actions
+**ThesisFlow — Thesis & Project Management Portal** | React, TypeScript, Express, PostgreSQL, SQLite, Docker, GitHub Actions
 
 - Extended an academic portal into a full-stack workspace with server-enforced student, supervisor and admin access, proposal reviews, progress tracking and versioned PDF submissions.
 - Containerized the application with persistent storage, non-root execution and health checks; implemented CI for type checks, integration tests, browser tests, image builds and vulnerability scanning.
 - Deployed an HTTPS live demo with automated releases and health-based image rollback. [Use this last statement only for the VPS delivery route after successful verification; for Render, describe its actual deployment process instead.]
 
-Add: `GitHub: YOUR_REPOSITORY_URL | Live demo: YOUR_VERIFIED_HTTPS_URL`.
+Verified links: [GitHub](https://github.com/faoziafariha/ThesisFlow) | [Live demo](https://thesisflow-wine.vercel.app).
 
 Before hosting, say "Implemented Docker and CI/CD configuration" rather than claiming a successful cloud deployment. Do not invent user counts, uptime, scale, performance gains, deployment statistics or ownership.
 

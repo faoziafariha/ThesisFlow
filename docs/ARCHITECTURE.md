@@ -11,9 +11,9 @@ flowchart LR
   API --> Assets[Vite static build]
 ```
 
-In development, Vite proxies `/api` to port 3000. In production, Express serves both the built UI and API on the same origin. The container is one deployable service; the VPS adds Caddy as an HTTPS reverse proxy.
+In development, Vite proxies `/api` to port 3000. In production, Express serves both the built UI and API on the same origin. The container is one deployable service; the optional VPS adds Caddy. On Vercel, api/index.js lazily creates the same asynchronous Express application and uses server/postgres.js with a small external PostgreSQL pool. SQLite remains available for local Docker development.
 
-`src/App.tsx` contains the small workspace UI and typed API state. `server/app.js` creates the HTTP application, validates requests, enforces permissions and implements domain routes. `server/db.js` defines the initial schema, demo seed and password hashing. `server/index.js` wires configuration, process lifecycle and persistent storage. SQL is parameterized. Tests instantiate the application with an isolated database. The original frontend is archived and excluded from builds and Docker images.
+`src/App.tsx` contains the small workspace UI and typed API state. `server/app.js` creates the HTTP application, validates requests, enforces permissions and implements domain routes. `server/db.js` defines the initial schema, demo seed and password hashing. `server/runtime.js` selects SQLite or PostgreSQL. `server/index.js` handles the standalone process lifecycle; `api/index.js` handles Vercel routing. `server/migrations/001-postgres.sql` provides the initial PostgreSQL schema, and a transaction/advisory lock makes concurrent cold-start initialization safe. SQL is parameterized. Tests instantiate the application with an isolated database. The original frontend is archived and excluded from builds and Docker images.
 
 ## Data model
 

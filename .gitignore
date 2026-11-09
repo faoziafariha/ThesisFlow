@@ -12,4 +12,3 @@ test-results/
 *.key
 *service*account*.json
 .vercel
-

@@ -1,5 +1,9 @@
 # ThesisFlow — Thesis & Project Management Portal
 
+[Live demo](https://thesisflow-wine.vercel.app) · [GitHub Actions](https://github.com/faoziafariha/ThesisFlow/actions) · [Free deployment guide](docs/VERCEL.md)
+
+![CI](https://github.com/faoziafariha/ThesisFlow/actions/workflows/pipeline.yml/badge.svg)
+
 A full-stack academic workspace with a React/TypeScript interface, an Express REST API, SQLite locally and persistent PostgreSQL storage on Vercel, and a Docker-to-GitHub-Actions delivery pipeline.
 
 Built as a portfolio extension of the supplied **CUET Thesis & Project Portal**. Original contributors: **Faozia Fariha, Arpita Mallik, and Ratnajit Dhar**. See [provenance](docs/PROVENANCE.md) for the distinction between the academic source and this implementation.
@@ -84,5 +88,3 @@ This is a single-instance portfolio application, not a horizontally scalable uni
 ## Attribution and rights
 
 The supplied archive did not include a license. Original authors retain their rights; no license is invented here. Confirm permission to publish the retained academic source/report, keep contributor credits, and describe your extension accurately. Credential-like JSON files, generated test results and accidental files from the archive were excluded.
-
-
