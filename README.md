@@ -1,6 +1,6 @@
 # ThesisFlow — Thesis & Project Management Portal
 
-A full-stack academic workspace with a React/TypeScript interface, an Express REST API, persistent SQLite storage, and a Docker-to-GitHub-Actions delivery pipeline.
+A full-stack academic workspace with a React/TypeScript interface, an Express REST API, SQLite locally and persistent PostgreSQL storage on Vercel, and a Docker-to-GitHub-Actions delivery pipeline.
 
 Built as a portfolio extension of the supplied **CUET Thesis & Project Portal**. Original contributors: **Faozia Fariha, Arpita Mallik, and Ratnajit Dhar**. See [provenance](docs/PROVENANCE.md) for the distinction between the academic source and this implementation.
 
@@ -45,10 +45,10 @@ Demo login is also available with these accounts and password `DemoPass!2026`:
 ## Engineering and delivery
 
 - TypeScript type checks and Vite production build
-- Express API with validated inputs and parameterized SQL
+- Asynchronous Express API with validated inputs and parameterized SQL
 - Scrypt password hashes, opaque server sessions, HttpOnly cookies, same-site cookies, origin checks, rate limits and Helmet headers
 - Server-enforced role and project ownership checks; protected document downloads
-- SQLite foreign keys, WAL mode and persistent container volume
+- SQLite WAL and a persistent Docker volume locally; pooled PostgreSQL with transactional initialization on Vercel
 - Multi-stage Docker image running as a non-root user, health checks and graceful shutdown
 - API integration tests and Playwright browser workflows
 - GitHub Actions: build → API tests → browser tests → Docker build → container smoke test → vulnerability scan → publish to GHCR → optional VPS deploy
@@ -71,11 +71,11 @@ API tests cover authentication, pending accounts, role scope, ownership, proposa
 
 Target repository: [faoziafariha/ThesisFlow](https://github.com/faoziafariha/ThesisFlow).
 
-For Vercel, read [VERCEL.md](docs/VERCEL.md) before importing. The frontend can run on Vercel; the current API needs a persistent database host. Frontend-only deployment is not a working full-stack demo.
+For Vercel, read [VERCEL.md](docs/VERCEL.md) before importing. The full app can run on Vercel with a connected Neon Free PostgreSQL database; local Docker runs can retain SQLite.
 
 ## Publish on GitHub and host a live demo
 
-Follow [DEPLOYMENT.md](docs/DEPLOYMENT.md). It includes a simple Render Docker option and the fuller GHCR + VPS pipeline. This deliverable is local source: no GitHub repository, public URL, successful hosted deployment or GitHub Actions run is claimed yet.
+Follow [DEPLOYMENT.md](docs/DEPLOYMENT.md). Start with the free Vercel + Neon route in [VERCEL.md](docs/VERCEL.md). The Docker/VPS and paid Render examples remain optional. Source is published at https://github.com/faoziafariha/ThesisFlow. See docs/VERIFICATION.md for verified deployment status.
 
 ## Scope and tradeoffs
 
@@ -84,4 +84,5 @@ This is a single-instance portfolio application, not a horizontally scalable uni
 ## Attribution and rights
 
 The supplied archive did not include a license. Original authors retain their rights; no license is invented here. Confirm permission to publish the retained academic source/report, keep contributor credits, and describe your extension accurately. Credential-like JSON files, generated test results and accidental files from the archive were excluded.
+
 

@@ -2,10 +2,15 @@ import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { openDatabase } from '../server/db.js';
 import { createApp } from '../server/app.js';
+import { openPostgres } from '../server/postgres.js';
 let db, server, base;
 const cookies = {};
 before(async () => {
-  db = openDatabase(':memory:');
+  db = process.env.TEST_DATABASE_URL
+    ? await openPostgres(process.env.TEST_DATABASE_URL, {
+        schema: `test_${Date.now()}_${process.pid}`,
+      })
+    : openDatabase(':memory:');
   server = createApp(db).listen(0, '127.0.0.1');
   await new Promise((r) => server.once('listening', r));
   base = `http://127.0.0.1:${server.address().port}/api`;
@@ -19,9 +24,10 @@ before(async () => {
     cookies[role] = r.headers.get('set-cookie').split(';')[0];
   }
 });
-after(() => {
+after(async () => {
   server.close();
-  db.close();
+  if (db.dropTestSchema) await db.dropTestSchema();
+  await db.close();
 });
 async function req(path, { role = 'student', method = 'GET', body, headers = {} } = {}) {
   const r = await fetch(base + path, {
@@ -167,7 +173,7 @@ test('PDF submissions preserve versions and protect downloads', async () => {
     (await req(`/submissions/${submissions[0].id}/download`, { role: 'supervisor' })).status,
     200,
   );
-  db.prepare('UPDATE submissions SET project_id=3 WHERE id=?').run(submissions[0].id);
+  await db.prepare('UPDATE submissions SET project_id=3 WHERE id=?').run(submissions[0].id);
   assert.equal(
     (await req(`/submissions/${submissions[0].id}/download`, { role: 'supervisor' })).status,
     404,

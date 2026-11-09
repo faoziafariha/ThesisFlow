@@ -1,40 +1,36 @@
-# Deploying with Vercel
+# Free Vercel + Neon deployment
 
-Repository: https://github.com/faoziafariha/ThesisFlow
+The application supports SQLite for local/Docker development and PostgreSQL for durable Vercel hosting. The paid Render blueprint is only an alternative example at `docs/examples/render.paid.yaml`; it is not the selected route.
 
-## What can be deployed as-is?
+## Setup
 
-The React/Vite frontend can be built on Vercel (`npm run build`, output `dist`). The full application currently needs its Express API and a persistent SQLite disk. A frontend-only deployment would display the page but login and every data workflow would fail without API routing.
+1. Link/import `faoziafariha/ThesisFlow` into Vercel. Use Vite, Node.js 24, build `npm run build`, output `dist`.
+2. Connect Neon using the **Free** plan in the linked project's Storage area. Review and accept marketplace terms yourself. Connect to Production. The integration supplies `DATABASE_URL` as a server-side secret. Never prefix it with `VITE_` or commit it.
+3. Deploy. `vercel.json` routes API requests to `api/index.js` and serves the built frontend. The runtime initializes the PostgreSQL schema under a transaction/advisory lock and seeds only an empty database.
+4. Check `/api/health`, then login, proposal/review flows, PDF upload/download, progress, admin approvals and logout on the final HTTPS URL.
 
-Vercel Functions do not provide persistent local SQLite storage. Do not move the database to `/tmp` as a workaround: users, sessions and submissions would be lost or inconsistent between instances. Vercel also does not deploy the included Compose stack as a normal Vite project.
+Current CLI provisioning command:
 
-Official documentation: https://vercel.com/kb/guide/is-sqlite-supported-in-vercel and https://vercel.com/docs/frameworks/backend/express
-
-## Recommended next deployment
-
-1. Deploy this repository's Docker backend on Render with the persistent disk in `render.yaml`, following `DEPLOYMENT.md`. Verify its `/api/health` endpoint.
-2. Create a Vercel project by importing `faoziafariha/ThesisFlow`. Use repository root `.`, Vite, build command `npm run build`, output directory `dist`, and Node.js 24.
-3. Before activating the frontend, configure a same-origin `/api/*` reverse-proxy rewrite to your real backend URL. Keep the API rewrite ahead of any SPA fallback. The browser code deliberately uses relative `/api` URLs and HttpOnly session cookies.
-4. Update the API's origin policy to allow the exact production Vercel origin, using a server-side allowlist. The current API rejects foreign origins intentionally. Do not remove that check or add wildcard credential access. Preview deployment origins should be explicitly reviewed rather than implicitly trusted.
-5. Test login, cookie persistence after reload, all three demo roles, PDF upload/download, reviews and logout on the final HTTPS Vercel URL before adding it to your CV.
-
-Example rewrite structure (replace the backend hostname before use):
-
-```json
-{
-  "rewrites": [
-    { "source": "/api/:path*", "destination": "https://YOUR-BACKEND.onrender.com/api/:path*" },
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
-  ]
-}
+```sh
+vercel integration add neon --billing-plan free_v3 --name thesisflow-db --meta region=sin1 --meta auth=false --environment production --no-env-pull
 ```
 
-This is a planning example, not an active `vercel.json`; a hostname and the corresponding backend origin-policy change are still required. Avoid deploying the frontend alone and describing it as a working full-stack demo.
+Plan IDs may change; verify the provider still identifies the selected plan as Free. Do not upgrade billing to bypass a free-tier limit.
 
-## Alternative: entire application on Vercel
+## Runtime and configuration
 
-First replace local SQLite with a hosted database (for example PostgreSQL), make database queries asynchronous, move uploaded PDFs into object storage or a suitable external database, and export an Express application using Vercel's supported server entry point. Keep sessions in shared durable storage. Re-test the existing authorization, document and browser workflows after that migration. This is a separate implementation task, not a configuration-only deployment.
+Users, sessions, reviews and PDF versions persist in PostgreSQL. PDFs are limited to 2 MB and stored as BYTEA. A small connection pool serves each warm function instance. No local disk is needed. `VERCEL` without `DATABASE_URL` fails with 503 rather than silently using ephemeral SQLite.
 
-## CI/CD distinction
+`DEMO_MODE=true` enables public shared synthetic accounts. `SEED_PASSWORD` applies only when seeding a new database. `FRONTEND_ORIGIN` is needed only for a separately hosted frontend; the same-origin Vercel app does not need it. Preview deployments need a separately connected database before API operations work; production credentials are not automatically copied to previews.
 
-The included GitHub Actions workflow tests the app and publishes a Docker image. Its optional SSH deployment job targets a VPS. A Vercel Git integration is a separate deployment route; configure Vercel deployment checks if you want publication to wait for GitHub quality checks. A green frontend build alone does not verify API/database connectivity.
+## CI/CD
+
+GitHub Actions checks formatting/build, tests the API against isolated SQLite and PostgreSQL databases, checks serverless routing/session behavior, and runs Chromium workflows. Docker is built, smoke-tested, scanned and then published to GHCR. The optional SSH deployment job is for a VPS and remains disabled.
+
+Vercel's Git integration is a separate deployment mechanism and does not wait for GitHub checks by default. Use a deployment gate or release manually after CI passes if strict ordering is required. Test the deployed API as well as the frontend build.
+
+## Free-tier limits
+
+Free services have storage, compute, request and bandwidth quotas, may cold-start, and are not an uptime SLA. Use fictional information for this personal portfolio/demo. Do not enable paid upgrades or automatic spending. Database BLOBs suit small demo documents; object storage is preferable at higher volume.
+
+Official references: [Vercel Functions](https://vercel.com/docs/functions), [Neon integration](https://vercel.com/integrations/neon), [integration CLI](https://vercel.com/docs/cli/integration).

@@ -96,5 +96,15 @@ export function openDatabase(path, { seed = true, password = 'DemoPass!2026' } =
       'Dr. Samiha Ahmed left feedback on your sign language project.',
     );
   }
+  db.batch = (statements) => {
+    db.exec('BEGIN');
+    try {
+      for (const { sql, args } of statements) db.prepare(sql).run(...args);
+      db.exec('COMMIT');
+    } catch (error) {
+      db.exec('ROLLBACK');
+      throw error;
+    }
+  };
   return db;
 }

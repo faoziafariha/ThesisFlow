@@ -1,3 +1,7 @@
+# Deployment routes
+
+The selected route is **Vercel + Neon Free**, documented in [VERCEL.md](VERCEL.md). Paid Render/VPS instructions below are optional alternatives.
+
 # Deployment guide
 
 ## 1. Create the GitHub repository
@@ -22,10 +26,10 @@ After the first successful main run, the image is at `ghcr.io/YOUR_USERNAME/thes
 
 ### Option A: Render Docker deployment
 
-This is the shorter path to an interviewer-accessible URL. The included `render.yaml` requests a **paid Starter service and 1 GB persistent disk**. Check Render's current pricing before creating it. SQLite data needs a persistent disk; an ephemeral free service would lose data on replacement.
+This is the shorter path to an interviewer-accessible URL. The included `docs/examples/render.paid.yaml` requests a **paid Starter service and 1 GB persistent disk**. Check Render's current pricing before creating it. SQLite data needs a persistent disk; an ephemeral free service would lose data on replacement.
 
 1. Connect your GitHub repository to Render and choose **New → Blueprint**.
-2. Review the `render.yaml` resources and create the service.
+2. Review the `docs/examples/render.paid.yaml` resources and create the service.
 3. Render builds the Dockerfile, mounts `/app/data`, checks `/api/health`, and assigns an HTTPS `onrender.com` URL.
 4. Keep `DEMO_MODE=true` for the public portfolio. Use fictional data only. Do not use shared demo admin access for real records.
 5. `autoDeployTrigger: checksPass` makes later Git deployments wait for repository checks. Verify the actual GitHub check results and Render deploy logs before claiming that the release passed.
@@ -110,3 +114,4 @@ Local Compose sets `NODE_ENV=development` so HTTP localhost sign-in works. Produ
 - **Deploy skipped:** add `DEPLOY_ENABLED=true` and configure deployment secrets, or use the Render route.
 - **Container scan fails:** update affected base image/dependencies and rerun; do not bypass the quality gate just to obtain a green badge.
 - **GHCR denied:** check package write permission in CI, package visibility, and any server-side registry login.
+
