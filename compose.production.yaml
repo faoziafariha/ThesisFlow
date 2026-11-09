@@ -1,0 +1,35 @@
+name: thesisflow
+services:
+  app:
+    image: ${PORTAL_IMAGE:?Set PORTAL_IMAGE to a GHCR image digest}
+    ports:
+      - '127.0.0.1:3000:3000'
+    environment:
+      NODE_ENV: production
+      DEMO_MODE: ${DEMO_MODE:-true}
+      DATABASE_PATH: /app/data/portal.sqlite
+      SEED_PASSWORD: ${SEED_PASSWORD:-DemoPass!2026}
+    volumes:
+      - portal-data:/app/data
+    restart: unless-stopped
+    init: true
+  proxy:
+    image: caddy:2-alpine
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?Set APP_DOMAIN to your DNS hostname}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+volumes:
+  portal-data:
+  caddy-data:
+  caddy-config:

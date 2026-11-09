@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: thesisflow
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/health
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DEMO_MODE
+        value: 'true'
+      - key: DATABASE_PATH
+        value: /app/data/portal.sqlite
+    disk:
+      name: portal-data
+      mountPath: /app/data
+      sizeGB: 1

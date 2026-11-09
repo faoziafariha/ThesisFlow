@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    ports:
+      - '127.0.0.1:3000:3000'
+    environment:
+      NODE_ENV: development
+      DEMO_MODE: ${DEMO_MODE:-true}
+      DATABASE_PATH: /app/data/portal.sqlite
+      SEED_PASSWORD: ${SEED_PASSWORD:-DemoPass!2026}
+    volumes:
+      - portal-data:/app/data
+    restart: unless-stopped
+    init: true
+volumes:
+  portal-data:
