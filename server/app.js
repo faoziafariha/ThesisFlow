@@ -7,7 +7,12 @@ import { verifyPassword } from './db.js';
 const digest = (t) => createHash('sha256').update(t).digest('hex');
 export function createApp(
   db,
-  { demo = true, production = false, staticDir = resolve('dist') } = {},
+  {
+    demo = true,
+    production = false,
+    staticDir = resolve('dist'),
+    frontendOrigin = process.env.FRONTEND_ORIGIN,
+  } = {},
 ) {
   const app = express();
   app.disable('x-powered-by');
@@ -41,7 +46,7 @@ export function createApp(
     const origin = req.get('origin');
     if (origin) {
       try {
-        if (new URL(origin).host !== req.get('host'))
+        if (new URL(origin).host !== req.get('host') && origin !== frontendOrigin)
           return res.status(403).json({ error: 'Origin rejected' });
       } catch {
         return res.status(403).json({ error: 'Origin rejected' });

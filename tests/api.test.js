@@ -252,3 +252,27 @@ test('demo access can be disabled', async () => {
     locked.close();
   }
 });
+
+test('Vercel proxy accepts only the configured frontend origin', async () => {
+  const app = createApp(db, { frontendOrigin: 'https://thesisflow.example' });
+  const proxyServer = app.listen(0, '127.0.0.1');
+  await new Promise((resolve) => proxyServer.once('listening', resolve));
+  const url = `http://127.0.0.1:${proxyServer.address().port}/api/auth/demo`;
+  try {
+    for (const [origin, expected] of [
+      ['https://thesisflow.example', 200],
+      ['https://thesisflow.example.attacker.test', 403],
+      ['https://attacker.test', 403],
+    ]) {
+      const result = await fetch(url, {
+        method: 'POST',
+        signal: AbortSignal.timeout(10000),
+        headers: { 'Content-Type': 'application/json', origin, 'sec-fetch-site': 'same-origin' },
+        body: JSON.stringify({ role: 'student' }),
+      });
+      assert.equal(result.status, expected);
+    }
+  } finally {
+    proxyServer.close();
+  }
+});
