@@ -1,6 +1,6 @@
 # ThesisFlow — Thesis & Project Management Portal
 
-[Live demo](https://thesisflow-wine.vercel.app) · [GitHub Actions](https://github.com/faoziafariha/ThesisFlow/actions) · [Free deployment guide](docs/VERCEL.md)
+[Live demo](https://thesisflow-wine.vercel.app) · [GitHub Actions](https://github.com/faoziafariha/ThesisFlow/actions) 
 
 ![CI](https://github.com/faoziafariha/ThesisFlow/actions/workflows/pipeline.yml/badge.svg)
 
@@ -58,7 +58,7 @@ Demo login is also available with these accounts and password `DemoPass!2026`:
 - GitHub Actions: build → API tests → browser tests → Docker build → container smoke test → vulnerability scan → publish to GHCR → optional VPS deploy
 - Caddy automatic HTTPS for a domain on a VPS; health-check failure rolls back to the previous image when one exists
 
-See [architecture and ERD](docs/ARCHITECTURE.md), [API reference](docs/API.md), [deployment guide](docs/DEPLOYMENT.md), and [interview/CV guide](docs/PORTFOLIO.md). The original academic report is retained as [REPORT.pdf](docs/REPORT.pdf); it describes the original project, not every design choice in this extension.
+
 
 ## Quality checks
 
@@ -77,9 +77,6 @@ Target repository: [faoziafariha/ThesisFlow](https://github.com/faoziafariha/The
 
 For Vercel, read [VERCEL.md](docs/VERCEL.md) before importing. The full app can run on Vercel with a connected Neon Free PostgreSQL database; local Docker runs can retain SQLite.
 
-## Publish on GitHub and host a live demo
-
-Follow [DEPLOYMENT.md](docs/DEPLOYMENT.md). Start with the free Vercel + Neon route in [VERCEL.md](docs/VERCEL.md). The Docker/VPS and paid Render examples remain optional. Source is published at https://github.com/faoziafariha/ThesisFlow. See docs/VERIFICATION.md for verified deployment status.
 
 ## Scope and tradeoffs
 
